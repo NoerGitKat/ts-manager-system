@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node ./dist/Launcher.js",
     "server": "ts-node ./src/Launcher.ts",
+    "dev": "nodemon",
     "watch": "tsc -w"
   },
   "keywords": [],
