@@ -1,6 +1,7 @@
 import { IncomingMessage, ServerResponse } from "http";
+import { LoginInformation, RequestHandler } from "./Model";
 
-class LoginHandler {
+class LoginHandler implements RequestHandler {
   private req: IncomingMessage;
   private res: ServerResponse;
 
@@ -14,7 +15,7 @@ class LoginHandler {
     const reqBody = await this.getRequestBody();
   }
 
-  private async getRequestBody(): Promise<any> {
+  private async getRequestBody(): Promise<LoginInformation> {
     return new Promise((resolve, reject) => {
       let reqBody = "";
 

@@ -10,7 +10,7 @@ class Launcher {
   }
 
   public launchApp() {
-    this.server.createServer(PORT);
+    this.server.startServer(PORT);
     console.log(`The server is running on port ${PORT}!`);
   }
 }

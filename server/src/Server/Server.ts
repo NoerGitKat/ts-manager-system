@@ -3,7 +3,7 @@ import LoginHandler from "./LoginHandler";
 import Utils from "./Utils";
 
 class Server {
-  public createServer(PORT: string | number) {
+  public startServer(PORT: string | number) {
     createServer(async (req: IncomingMessage, res: ServerResponse) => {
       const route = Utils.getUrlRoute(req.url);
 

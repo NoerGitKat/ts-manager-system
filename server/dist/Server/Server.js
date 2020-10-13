@@ -42,7 +42,7 @@ var Utils_1 = require("./Utils");
 var Server = /** @class */ (function () {
     function Server() {
     }
-    Server.prototype.createServer = function (PORT) {
+    Server.prototype.startServer = function (PORT) {
         var _this = this;
         http_1.createServer(function (req, res) { return __awaiter(_this, void 0, void 0, function () {
             var route, _a, loginHandler;

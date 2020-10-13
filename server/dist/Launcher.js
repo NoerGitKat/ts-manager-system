@@ -7,7 +7,7 @@ var Launcher = /** @class */ (function () {
         this.server = new Server_1["default"]();
     }
     Launcher.prototype.launchApp = function () {
-        this.server.createServer(PORT);
+        this.server.startServer(PORT);
         console.log("The server is running on port " + PORT + "!");
     };
     return Launcher;
