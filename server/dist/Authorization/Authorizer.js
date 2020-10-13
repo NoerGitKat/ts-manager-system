@@ -36,43 +36,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-var http_1 = require("http");
-var Authorizer_1 = require("./../Authorization/Authorizer");
-var LoginHandler_1 = require("./LoginHandler");
-var Utils_1 = require("./Utils");
-var Server = /** @class */ (function () {
-    function Server() {
-        this.authorizer = new Authorizer_1["default"]();
+var Authorizer = /** @class */ (function () {
+    function Authorizer() {
     }
-    Server.prototype.startServer = function (PORT) {
-        var _this = this;
-        http_1.createServer(function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var route, _a, loginHandler;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        route = Utils_1["default"].getUrlRoute(req.url);
-                        _a = route;
-                        switch (_a) {
-                            case "/login": return [3 /*break*/, 1];
-                        }
-                        return [3 /*break*/, 3];
-                    case 1:
-                        loginHandler = new LoginHandler_1["default"](req, res, this.authorizer);
-                        return [4 /*yield*/, loginHandler.handleRequest()];
-                    case 2:
-                        _b.sent();
-                        return [3 /*break*/, 4];
-                    case 3:
-                        console.log("other route asds");
-                        _b.label = 4;
-                    case 4:
-                        res.end();
-                        return [2 /*return*/];
+    Authorizer.prototype.generateToken = function (credentials) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                // 1. Verify credentials in DB
+                if (credentials.username === "abc" && credentials.password == "123") {
+                    // 2. If valid, create random string as token
+                    // 3. Return token
+                    return [2 /*return*/, {
+                            tokenId: "asjkd123"
+                        }];
                 }
+                else {
+                    return [2 /*return*/, undefined];
+                }
+                return [2 /*return*/];
             });
-        }); }).listen(PORT);
+        });
     };
-    return Server;
+    return Authorizer;
 }());
-exports["default"] = Server;
+exports["default"] = Authorizer;
