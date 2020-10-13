@@ -36,41 +36,50 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-var http_1 = require("http");
-var LoginHandler_1 = require("./LoginHandler");
-var Utils_1 = require("./Utils");
-var Server = /** @class */ (function () {
-    function Server() {
+var LoginHandler = /** @class */ (function () {
+    function LoginHandler(req, res) {
+        this.req = req;
+        this.res = res;
     }
-    Server.prototype.createServer = function (PORT) {
-        var _this = this;
-        http_1.createServer(function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var route, _a, loginHandler;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        route = Utils_1["default"].getUrlRoute(req.url);
-                        _a = route;
-                        switch (_a) {
-                            case "/login": return [3 /*break*/, 1];
-                        }
-                        return [3 /*break*/, 3];
+    // This method handles different types of requests
+    LoginHandler.prototype.handleRequest = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var reqBody;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getRequestBody()];
                     case 1:
-                        loginHandler = new LoginHandler_1["default"](req, res);
-                        return [4 /*yield*/, loginHandler.handleRequest()];
-                    case 2:
-                        _b.sent();
-                        return [3 /*break*/, 4];
-                    case 3:
-                        console.log("other route asds");
-                        _b.label = 4;
-                    case 4:
-                        res.end();
+                        reqBody = _a.sent();
                         return [2 /*return*/];
                 }
             });
-        }); }).listen(PORT);
+        });
     };
-    return Server;
+    LoginHandler.prototype.getRequestBody = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        var reqBody = "";
+                        _this.req.on("data", function (data) {
+                            reqBody += data;
+                        });
+                        _this.req.on("end", function () {
+                            try {
+                                var parsedBody = JSON.parse(reqBody);
+                                resolve(parsedBody);
+                            }
+                            catch (error) {
+                                reject(error);
+                            }
+                        });
+                        _this.req.on("error", function (error) {
+                            reject(error);
+                        });
+                    })];
+            });
+        });
+    };
+    return LoginHandler;
 }());
-exports["default"] = Server;
+exports["default"] = LoginHandler;
