@@ -36,47 +36,30 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-var TokenDbAccess_1 = require("./TokenDbAccess");
-var UserDbAccess_1 = require("./UserDbAccess");
-var Authorizer = /** @class */ (function () {
-    function Authorizer() {
-        this.userDbAccess = new UserDbAccess_1["default"]();
-        this.tokenDbAccess = new TokenDbAccess_1["default"]();
+var Nedb = require("nedb");
+var path_1 = require("path");
+var TokenDbAccess = /** @class */ (function () {
+    function TokenDbAccess() {
+        this.database = new Nedb(path_1.join(__dirname, "../database/SessionToken.db"));
+        this.database.loadDatabase();
     }
-    Authorizer.prototype.generateToken = function (credentials) {
+    TokenDbAccess.prototype.storeTokenInDB = function (token) {
         return __awaiter(this, void 0, void 0, function () {
-            var validUser, sessionToken;
+            var _this = this;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.userDbAccess.checkUserInDB(credentials.username, credentials.password)];
-                    case 1:
-                        validUser = _a.sent();
-                        if (!validUser) return [3 /*break*/, 3];
-                        sessionToken = {
-                            privileges: validUser.privileges,
-                            expirationTime: this.generateExpirationTime(),
-                            username: validUser.username,
-                            isValid: true,
-                            tokenId: this.generateRandomTokenId()
-                        };
-                        // 3. Store token in token DB
-                        return [4 /*yield*/, this.tokenDbAccess.storeTokenInDB(sessionToken)];
-                    case 2:
-                        // 3. Store token in token DB
-                        _a.sent();
-                        // 4. Return token
-                        return [2 /*return*/, sessionToken];
-                    case 3: return [2 /*return*/, undefined];
-                }
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        _this.database.insert(token, function (error) {
+                            if (error) {
+                                reject(error);
+                            }
+                            else {
+                                resolve();
+                            }
+                        });
+                    })];
             });
         });
     };
-    Authorizer.prototype.generateExpirationTime = function () {
-        return new Date(Date.now() + 60 * 60 * 1000);
-    };
-    Authorizer.prototype.generateRandomTokenId = function () {
-        return Math.random().toString(36).slice(2);
-    };
-    return Authorizer;
+    return TokenDbAccess;
 }());
-exports["default"] = Authorizer;
+exports["default"] = TokenDbAccess;

@@ -34,6 +34,8 @@ class LoginHandler implements RequestHandler {
         const sessionToken = await this.tokenGenerator.generateToken(reqBody);
 
         if (sessionToken) {
+          
+
           this.res.write(`Your creds are valid! ${sessionToken.tokenId}`);
         } else {
           this.res.write("Incorrect creds, bruh.");

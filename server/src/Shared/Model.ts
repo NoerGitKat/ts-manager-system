@@ -11,4 +11,4 @@ interface UserCreds extends LoginInformation {
   privileges: Privilege[];
 }
 
-export { UserCreds };
+export { UserCreds, Privilege };
