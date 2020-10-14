@@ -1,5 +1,6 @@
 import * as Nedb from "nedb";
 import { join } from "path";
+import { Url, UrlWithParsedQuery } from "url";
 import { User } from "./Model";
 
 class UsersDbAccess {
@@ -22,15 +23,18 @@ class UsersDbAccess {
     });
   }
 
-  public async getOneUserInDB(id: string): Promise<User> {
+  public async getOneUserInDB(userId: string): Promise<User> {
     return new Promise((resolve, reject) => {
-      this.database.findOne({ id }, (error: Error | null, document: User) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(document);
+      this.database.findOne(
+        { id: userId },
+        (error: Error | null, document: User) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(document);
+          }
         }
-      });
+      );
     });
   }
 }

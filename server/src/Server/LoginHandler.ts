@@ -32,7 +32,7 @@ class LoginHandler extends BaseRequestHandler {
         await this.loginUser();
         break;
       default:
-        this.handleNotFound();
+        this.handleNotFound("Method not found!");
         break;
     }
   }
@@ -45,11 +45,7 @@ class LoginHandler extends BaseRequestHandler {
         const sessionToken = await this.tokenGenerator.generateToken(reqBody);
 
         if (sessionToken) {
-          this.res.statusCode = HTTP_CODES.OK;
-          this.res.writeHead(HTTP_CODES.OK, {
-            "Content-Type": "application/json",
-          });
-          this.res.write(JSON.stringify(sessionToken));
+          this.respondWithJSON(HTTP_CODES.OK, sessionToken);
         } else {
           this.res.write("Incorrect creds, bruh.");
         }

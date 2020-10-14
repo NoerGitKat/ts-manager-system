@@ -49,13 +49,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
+var UsersDbAccess_1 = require("../Authentication/UsersDbAccess");
 var Model_1 = require("../Shared/Model");
 var BaseRequestHandler_1 = require("./BaseRequestHandler");
 var Utils_1 = require("./Utils");
 var UsersHandler = /** @class */ (function (_super) {
     __extends(UsersHandler, _super);
     function UsersHandler(req, res) {
-        return _super.call(this, req, res) || this;
+        var _this = _super.call(this, req, res) || this;
+        _this.userDbAccess = new UsersDbAccess_1["default"]();
+        return _this;
     }
     UsersHandler.prototype.handleRequest = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -75,7 +78,7 @@ var UsersHandler = /** @class */ (function (_super) {
                         return [3 /*break*/, 5];
                     case 3: return [3 /*break*/, 5];
                     case 4:
-                        this.handleNotFound();
+                        this.handleNotFound("Method not found!");
                         return [3 /*break*/, 5];
                     case 5: return [2 /*return*/];
                 }
@@ -84,13 +87,28 @@ var UsersHandler = /** @class */ (function (_super) {
     };
     UsersHandler.prototype.getOneUser = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var parsedUrl;
+            var parsedUrl, userId, user;
             return __generator(this, function (_a) {
-                parsedUrl = Utils_1["default"].getQueryParams(this.req.url);
-                if (parsedUrl) {
-                    // Get user from db
+                switch (_a.label) {
+                    case 0:
+                        parsedUrl = Utils_1["default"].getQueryParams(this.req.url);
+                        if (!parsedUrl) return [3 /*break*/, 2];
+                        userId = parsedUrl.query.id;
+                        return [4 /*yield*/, this.userDbAccess.getOneUserInDB(userId)];
+                    case 1:
+                        user = _a.sent();
+                        if (user) {
+                            this.res.writeHead(Model_1.HTTP_CODES.OK, {
+                                "Content-Type": "application/json"
+                            });
+                            this.res.write(JSON.stringify(user));
+                        }
+                        else {
+                            this.handleNotFound("No user found!");
+                        }
+                        _a.label = 2;
+                    case 2: return [2 /*return*/, undefined];
                 }
-                return [2 /*return*/, undefined];
             });
         });
     };

@@ -60,12 +60,12 @@ var UsersDbAccess = /** @class */ (function () {
             });
         });
     };
-    UsersDbAccess.prototype.getOneUserInDB = function (id) {
+    UsersDbAccess.prototype.getOneUserInDB = function (userId) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
                 return [2 /*return*/, new Promise(function (resolve, reject) {
-                        _this.database.findOne({ id: id }, function (error, document) {
+                        _this.database.findOne({ id: userId }, function (error, document) {
                             if (error) {
                                 reject(error);
                             }

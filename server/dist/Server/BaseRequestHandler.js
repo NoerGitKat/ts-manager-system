@@ -42,14 +42,21 @@ var BaseRequestHandler = /** @class */ (function () {
         this.req = req;
         this.res = res;
     }
-    BaseRequestHandler.prototype.handleNotFound = function () {
+    BaseRequestHandler.prototype.handleNotFound = function (message) {
         this.res.statusCode = Model_1.HTTP_CODES.NOT_FOUND;
-        this.res.write("Method not found!");
+        this.res.write(message);
     };
     BaseRequestHandler.prototype.handleBadRequest = function (error) {
         this.res.statusCode = Model_1.HTTP_CODES.BAD_REQUEST;
         this.res.writeHead(Model_1.HTTP_CODES.BAD_REQUEST);
         this.res.write("Something went wrong: " + error.message);
+    };
+    BaseRequestHandler.prototype.respondWithJSON = function (code, object) {
+        this.res.statusCode = code;
+        this.res.writeHead(code, {
+            "Content-Type": "application/json"
+        });
+        this.res.write(JSON.stringify(object));
     };
     BaseRequestHandler.prototype.getRequestBody = function () {
         return __awaiter(this, void 0, void 0, function () {

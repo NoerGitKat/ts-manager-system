@@ -82,7 +82,7 @@ var LoginHandler = /** @class */ (function (_super) {
                         _b.sent();
                         return [3 /*break*/, 4];
                     case 3:
-                        this.handleNotFound();
+                        this.handleNotFound("Method not found!");
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -104,11 +104,7 @@ var LoginHandler = /** @class */ (function (_super) {
                     case 2:
                         sessionToken = _a.sent();
                         if (sessionToken) {
-                            this.res.statusCode = Model_1.HTTP_CODES.OK;
-                            this.res.writeHead(Model_1.HTTP_CODES.OK, {
-                                "Content-Type": "application/json"
-                            });
-                            this.res.write(JSON.stringify(sessionToken));
+                            this.respondWithJSON(Model_1.HTTP_CODES.OK, sessionToken);
                         }
                         else {
                             this.res.write("Incorrect creds, bruh.");

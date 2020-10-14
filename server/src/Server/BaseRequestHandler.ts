@@ -13,15 +13,23 @@ abstract class BaseRequestHandler {
 
   abstract async handleRequest(): Promise<void>;
 
-  public handleNotFound(): void {
+  public handleNotFound(message: string): void {
     this.res.statusCode = HTTP_CODES.NOT_FOUND;
-    this.res.write("Method not found!");
+    this.res.write(message);
   }
 
   public handleBadRequest(error: Error): void {
     this.res.statusCode = HTTP_CODES.BAD_REQUEST;
     this.res.writeHead(HTTP_CODES.BAD_REQUEST);
     this.res.write(`Something went wrong: ${error.message}`);
+  }
+
+  public respondWithJSON(code: HTTP_CODES, object: any) {
+    this.res.statusCode = code;
+    this.res.writeHead(code, {
+      "Content-Type": "application/json",
+    });
+    this.res.write(JSON.stringify(object));
   }
 
   protected async getRequestBody(): Promise<LoginInformation> {
