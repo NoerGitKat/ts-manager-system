@@ -1,5 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { TokenGenerator } from "../Authorization/Model";
+import { HTTP_CODES, HTTP_METHODS } from "../Shared/Model";
 import { LoginInformation, RequestHandler } from "./Model";
 
 /* 
@@ -27,6 +28,17 @@ class LoginHandler implements RequestHandler {
 
   // This method handles different types of requests
   public async handleRequest(): Promise<void> {
+    switch (this.req.method) {
+      case HTTP_METHODS.POST:
+        await this.handlePostRequest();
+        break;
+      default:
+        this.res.write("Method not found!");
+        break;
+    }
+  }
+
+  private async handlePostRequest() {
     try {
       const reqBody = await this.getRequestBody();
 
@@ -34,15 +46,19 @@ class LoginHandler implements RequestHandler {
         const sessionToken = await this.tokenGenerator.generateToken(reqBody);
 
         if (sessionToken) {
-          
-
-          this.res.write(`Your creds are valid! ${sessionToken.tokenId}`);
+          this.res.statusCode = HTTP_CODES.OK;
+          this.res.writeHead(HTTP_CODES.OK, {
+            "Content-Type": "application/json",
+          });
+          this.res.write(JSON.stringify(sessionToken));
         } else {
           this.res.write("Incorrect creds, bruh.");
         }
       }
     } catch (error) {
-      // Send bad request response to client
+      this.res.statusCode = HTTP_CODES.BAD_REQUEST;
+      this.res.writeHead(HTTP_CODES.BAD_REQUEST);
+      this.res.write(`Something went wrong: ${error.message}`);
     }
   }
 

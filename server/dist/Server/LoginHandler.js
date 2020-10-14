@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
+var Model_1 = require("../Shared/Model");
 /*
   This class handles anything related to a user wanting to login.
   This includes:
@@ -52,6 +53,29 @@ var LoginHandler = /** @class */ (function () {
     // This method handles different types of requests
     LoginHandler.prototype.handleRequest = function () {
         return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = this.req.method;
+                        switch (_a) {
+                            case Model_1.HTTP_METHODS.POST: return [3 /*break*/, 1];
+                        }
+                        return [3 /*break*/, 3];
+                    case 1: return [4 /*yield*/, this.handlePostRequest()];
+                    case 2:
+                        _b.sent();
+                        return [3 /*break*/, 4];
+                    case 3:
+                        this.res.write("Method not found!");
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    LoginHandler.prototype.handlePostRequest = function () {
+        return __awaiter(this, void 0, void 0, function () {
             var reqBody, sessionToken, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -65,7 +89,11 @@ var LoginHandler = /** @class */ (function () {
                     case 2:
                         sessionToken = _a.sent();
                         if (sessionToken) {
-                            this.res.write("Your creds are valid! " + sessionToken.tokenId);
+                            this.res.statusCode = Model_1.HTTP_CODES.OK;
+                            this.res.writeHead(Model_1.HTTP_CODES.OK, {
+                                "Content-Type": "application/json"
+                            });
+                            this.res.write(JSON.stringify(sessionToken));
                         }
                         else {
                             this.res.write("Incorrect creds, bruh.");
@@ -74,6 +102,9 @@ var LoginHandler = /** @class */ (function () {
                     case 3: return [3 /*break*/, 5];
                     case 4:
                         error_1 = _a.sent();
+                        this.res.statusCode = Model_1.HTTP_CODES.BAD_REQUEST;
+                        this.res.writeHead(Model_1.HTTP_CODES.BAD_REQUEST);
+                        this.res.write("Something went wrong: " + error_1.message);
                         return [3 /*break*/, 5];
                     case 5: return [2 /*return*/];
                 }
