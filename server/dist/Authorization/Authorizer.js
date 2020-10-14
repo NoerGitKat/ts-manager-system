@@ -37,10 +37,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 var TokenDbAccess_1 = require("./TokenDbAccess");
-var UserDbAccess_1 = require("./UserDbAccess");
+var CredsDbAccess_1 = require("./CredsDbAccess");
 var Authorizer = /** @class */ (function () {
     function Authorizer() {
-        this.userDbAccess = new UserDbAccess_1["default"]();
+        this.credsDbAccess = new CredsDbAccess_1["default"]();
         this.tokenDbAccess = new TokenDbAccess_1["default"]();
     }
     Authorizer.prototype.generateToken = function (credentials) {
@@ -48,9 +48,10 @@ var Authorizer = /** @class */ (function () {
             var validUser, sessionToken;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.userDbAccess.checkUserInDB(credentials.username, credentials.password)];
+                    case 0: return [4 /*yield*/, this.credsDbAccess.checkUserInDB(credentials.username, credentials.password)];
                     case 1:
                         validUser = _a.sent();
+                        console.log("validUser", validUser);
                         if (!validUser) return [3 /*break*/, 3];
                         sessionToken = {
                             privileges: validUser.privileges,

@@ -1,16 +1,16 @@
-import UserDbAccess from "../Authorization/UserDbAccess";
+import CredsDbAccess from "../Authorization/CredsDbAccess";
 
 class DbTest {
-  public dbAccess: UserDbAccess = new UserDbAccess();
+  public dbAccess: CredsDbAccess = new CredsDbAccess();
 
   public constructor() {
-    this.dbAccess = new UserDbAccess();
+    this.dbAccess = new CredsDbAccess();
   }
 }
 
 new DbTest().dbAccess.storeUserInDB({
-  username: "ok man",
-  password: "123",
+  username: "coolboi",
+  password: "abc",
   privileges: [0, 1, 2, 3],
 });
 

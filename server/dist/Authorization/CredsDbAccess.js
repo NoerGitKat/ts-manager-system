@@ -38,12 +38,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var Nedb = require("nedb");
 var path_1 = require("path");
-var UserDbAccess = /** @class */ (function () {
-    function UserDbAccess() {
-        this.database = new Nedb(path_1.join(__dirname, "../database/UserCredentials.db"));
+var CredsDbAccess = /** @class */ (function () {
+    function CredsDbAccess() {
+        this.database = new Nedb(path_1.join(__dirname, "../database/Credentials.db"));
         this.database.loadDatabase();
     }
-    UserDbAccess.prototype.storeUserInDB = function (credentials) {
+    CredsDbAccess.prototype.storeUserInDB = function (credentials) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
@@ -60,16 +60,18 @@ var UserDbAccess = /** @class */ (function () {
             });
         });
     };
-    UserDbAccess.prototype.checkUserInDB = function (username, password) {
+    CredsDbAccess.prototype.checkUserInDB = function (username, password) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
                 return [2 /*return*/, new Promise(function (resolve, reject) {
+                        console.log("username", username);
                         _this.database.find({ username: username, password: password }, function (err, docs) {
                             if (err) {
                                 reject(err);
                             }
                             else {
+                                console.log("docs", docs);
                                 if (docs.length == 0) {
                                     resolve(undefined);
                                 }
@@ -82,6 +84,6 @@ var UserDbAccess = /** @class */ (function () {
             });
         });
     };
-    return UserDbAccess;
+    return CredsDbAccess;
 }());
-exports["default"] = UserDbAccess;
+exports["default"] = CredsDbAccess;

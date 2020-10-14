@@ -1,20 +1,21 @@
 import { LoginInformation } from "../Server/Model";
 import { TokenGenerator, SessionToken } from "./Model";
 import TokenDbAccess from "./TokenDbAccess";
-import UserDbAccess from "./UserDbAccess";
+import CredsDbAccess from "./CredsDbAccess";
 
 class Authorizer implements TokenGenerator {
-  private userDbAccess: UserDbAccess = new UserDbAccess();
+  private credsDbAccess: CredsDbAccess = new CredsDbAccess();
   private tokenDbAccess: TokenDbAccess = new TokenDbAccess();
 
   public async generateToken(
     credentials: LoginInformation
   ): Promise<SessionToken | undefined> {
     // 1. Verify credentials in DB
-    const validUser = await this.userDbAccess.checkUserInDB(
+    const validUser = await this.credsDbAccess.checkUserInDB(
       credentials.username,
       credentials.password
     );
+    console.log("validUser", validUser);
     if (validUser) {
       // 2. Create token
       const sessionToken = {
