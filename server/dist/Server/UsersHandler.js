@@ -72,16 +72,19 @@ var UsersHandler = /** @class */ (function (_super) {
                             case Model_1.HTTP_METHODS.GET: return [3 /*break*/, 1];
                             case Model_1.HTTP_METHODS.POST: return [3 /*break*/, 3];
                         }
-                        return [3 /*break*/, 4];
+                        return [3 /*break*/, 5];
                     case 1: return [4 /*yield*/, this.getOneUser()];
                     case 2:
                         _b.sent();
-                        return [3 /*break*/, 5];
-                    case 3: return [3 /*break*/, 5];
+                        return [3 /*break*/, 6];
+                    case 3: return [4 /*yield*/, this.createUser()];
                     case 4:
+                        _b.sent();
+                        return [3 /*break*/, 6];
+                    case 5:
                         this.handleNotFound("Method not found!");
-                        return [3 /*break*/, 5];
-                    case 5: return [2 /*return*/];
+                        return [3 /*break*/, 6];
+                    case 6: return [2 /*return*/];
                 }
             });
         });
@@ -117,12 +120,48 @@ var UsersHandler = /** @class */ (function (_super) {
             });
         });
     };
-    UsersHandler.prototype.authorizeRequest = function (operation) {
+    UsersHandler.prototype.createUser = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var tokenId, tokenPrivileges;
+            var isAuthorized, newUser, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        _a.trys.push([0, 6, , 7]);
+                        return [4 /*yield*/, this.authorizeRequest(Model_1.Privilege.CREATE)];
+                    case 1:
+                        isAuthorized = _a.sent();
+                        if (!isAuthorized) return [3 /*break*/, 4];
+                        return [4 /*yield*/, this.getRequestBody()];
+                    case 2:
+                        newUser = _a.sent();
+                        // 3. Create new user in DB
+                        return [4 /*yield*/, this.userDbAccess.storeUserInDB(newUser)];
+                    case 3:
+                        // 3. Create new user in DB
+                        _a.sent();
+                        // // 4. Respond with new user
+                        this.respondWithJSON(Model_1.HTTP_CODES.CREATED, newUser);
+                        return [3 /*break*/, 5];
+                    case 4:
+                        this.handleUnAuthorizedRequest("You are not authorized to do this.");
+                        _a.label = 5;
+                    case 5: return [3 /*break*/, 7];
+                    case 6:
+                        error_1 = _a.sent();
+                        this.handleServerError(error_1.message);
+                        return [3 /*break*/, 7];
+                    case 7: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    UsersHandler.prototype.authorizeRequest = function (operation) {
+        return __awaiter(this, void 0, void 0, function () {
+            var tokenId, tokenPrivileges, error_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 4, , 5]);
                         tokenId = this.req.headers.authorization;
                         if (!tokenId) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.tokenValidator.validateToken(tokenId)];
@@ -137,7 +176,12 @@ var UsersHandler = /** @class */ (function (_super) {
                         }
                         return [3 /*break*/, 3];
                     case 2: return [2 /*return*/, false];
-                    case 3: return [2 /*return*/];
+                    case 3: return [3 /*break*/, 5];
+                    case 4:
+                        error_2 = _a.sent();
+                        this.handleServerError(error_2.message);
+                        return [2 /*return*/, false];
+                    case 5: return [2 /*return*/];
                 }
             });
         });

@@ -1,4 +1,5 @@
 import { IncomingMessage, ServerResponse } from "http";
+import { User } from "../Authentication/Model";
 import { HTTP_CODES } from "../Shared/Model";
 import { LoginInformation } from "./Model";
 
@@ -30,6 +31,12 @@ abstract class BaseRequestHandler {
     this.res.write(`Something went wrong: ${message}`);
   }
 
+  public handleServerError(message: string): void {
+    this.res.statusCode = HTTP_CODES.SERVER_ERROR;
+    this.res.writeHead(HTTP_CODES.SERVER_ERROR);
+    this.res.write(`Something went wrong: ${message}`);
+  }
+
   public respondWithJSON(code: HTTP_CODES, object: any) {
     this.res.statusCode = code;
     this.res.writeHead(code, {
@@ -38,7 +45,7 @@ abstract class BaseRequestHandler {
     this.res.write(JSON.stringify(object));
   }
 
-  protected async getRequestBody(): Promise<LoginInformation> {
+  protected async getRequestBody(): Promise<any> {
     return new Promise((resolve, reject) => {
       let reqBody = "";
 

@@ -47,6 +47,9 @@ var UsersDbAccess = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
+                if (!user.id) {
+                    user.id = this.generateRandomUserId();
+                }
                 return [2 /*return*/, new Promise(function (resolve, reject) {
                         _this.database.insert(user, function (error) {
                             if (error) {
@@ -76,6 +79,9 @@ var UsersDbAccess = /** @class */ (function () {
                     })];
             });
         });
+    };
+    UsersDbAccess.prototype.generateRandomUserId = function () {
+        return Math.random().toString(36).slice(2);
     };
     return UsersDbAccess;
 }());

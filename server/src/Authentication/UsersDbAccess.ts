@@ -12,6 +12,9 @@ class UsersDbAccess {
   }
 
   public async storeUserInDB(user: User): Promise<void> {
+    if (!user.id) {
+      user.id = this.generateRandomUserId();
+    }
     return new Promise((resolve, reject) => {
       this.database.insert(user, (error: Error | null) => {
         if (error) {
@@ -36,6 +39,10 @@ class UsersDbAccess {
         }
       );
     });
+  }
+
+  private generateRandomUserId(): string {
+    return Math.random().toString(36).slice(2);
   }
 }
 
