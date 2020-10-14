@@ -21,6 +21,18 @@ class UsersDbAccess {
       });
     });
   }
+
+  public async getOneUserInDB(id: string): Promise<User> {
+    return new Promise((resolve, reject) => {
+      this.database.findOne({ id }, (error: Error | null, document: User) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(document);
+        }
+      });
+    });
+  }
 }
 
 export default UsersDbAccess;

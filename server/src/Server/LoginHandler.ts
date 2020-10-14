@@ -1,7 +1,9 @@
+import { throws } from "assert";
 import { IncomingMessage, ServerResponse } from "http";
 import { TokenGenerator } from "../Authorization/Model";
 import { HTTP_CODES, HTTP_METHODS } from "../Shared/Model";
-import { LoginInformation, RequestHandler } from "./Model";
+import BaseRequestHandler from "./BaseRequestHandler";
+import { LoginInformation } from "./Model";
 
 /* 
   This class handles anything related to a user wanting to login.
@@ -11,9 +13,7 @@ import { LoginInformation, RequestHandler } from "./Model";
   - Invokes tokenGenerator from another class
 */
 
-class LoginHandler implements RequestHandler {
-  private req: IncomingMessage;
-  private res: ServerResponse;
+class LoginHandler extends BaseRequestHandler {
   private tokenGenerator: TokenGenerator;
 
   public constructor(
@@ -21,8 +21,7 @@ class LoginHandler implements RequestHandler {
     res: ServerResponse,
     tokenGenerator: TokenGenerator
   ) {
-    this.req = req;
-    this.res = res;
+    super(req, res);
     this.tokenGenerator = tokenGenerator;
   }
 
@@ -30,15 +29,15 @@ class LoginHandler implements RequestHandler {
   public async handleRequest(): Promise<void> {
     switch (this.req.method) {
       case HTTP_METHODS.POST:
-        await this.handlePostRequest();
+        await this.loginUser();
         break;
       default:
-        this.res.write("Method not found!");
+        this.handleNotFound();
         break;
     }
   }
 
-  private async handlePostRequest() {
+  private async loginUser(): Promise<void> {
     try {
       const reqBody = await this.getRequestBody();
 
@@ -56,33 +55,8 @@ class LoginHandler implements RequestHandler {
         }
       }
     } catch (error) {
-      this.res.statusCode = HTTP_CODES.BAD_REQUEST;
-      this.res.writeHead(HTTP_CODES.BAD_REQUEST);
-      this.res.write(`Something went wrong: ${error.message}`);
+      this.handleBadRequest(error);
     }
-  }
-
-  private async getRequestBody(): Promise<LoginInformation> {
-    return new Promise((resolve, reject) => {
-      let reqBody = "";
-
-      this.req.on("data", (data: string) => {
-        reqBody += data;
-      });
-
-      this.req.on("end", () => {
-        try {
-          const parsedBody = JSON.parse(reqBody);
-          resolve(parsedBody);
-        } catch (error) {
-          reject(error);
-        }
-      });
-
-      this.req.on("error", (error: any) => {
-        reject(error);
-      });
-    });
   }
 }
 

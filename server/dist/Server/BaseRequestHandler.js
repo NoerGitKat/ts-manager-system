@@ -36,47 +36,46 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-var TokenDbAccess_1 = require("./TokenDbAccess");
-var CredsDbAccess_1 = require("./CredsDbAccess");
-var Authorizer = /** @class */ (function () {
-    function Authorizer() {
-        this.credsDbAccess = new CredsDbAccess_1["default"]();
-        this.tokenDbAccess = new TokenDbAccess_1["default"]();
+var Model_1 = require("../Shared/Model");
+var BaseRequestHandler = /** @class */ (function () {
+    function BaseRequestHandler(req, res) {
+        this.req = req;
+        this.res = res;
     }
-    Authorizer.prototype.generateToken = function (credentials) {
+    BaseRequestHandler.prototype.handleNotFound = function () {
+        this.res.statusCode = Model_1.HTTP_CODES.NOT_FOUND;
+        this.res.write("Method not found!");
+    };
+    BaseRequestHandler.prototype.handleBadRequest = function (error) {
+        this.res.statusCode = Model_1.HTTP_CODES.BAD_REQUEST;
+        this.res.writeHead(Model_1.HTTP_CODES.BAD_REQUEST);
+        this.res.write("Something went wrong: " + error.message);
+    };
+    BaseRequestHandler.prototype.getRequestBody = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var validUser, sessionToken;
+            var _this = this;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.credsDbAccess.checkUserInDB(credentials.username, credentials.password)];
-                    case 1:
-                        validUser = _a.sent();
-                        if (!validUser) return [3 /*break*/, 3];
-                        sessionToken = {
-                            privileges: validUser.privileges,
-                            expirationTime: this.generateExpirationTime(),
-                            username: validUser.username,
-                            isValid: true,
-                            tokenId: this.generateRandomTokenId()
-                        };
-                        // 3. Store token in token DB
-                        return [4 /*yield*/, this.tokenDbAccess.storeTokenInDB(sessionToken)];
-                    case 2:
-                        // 3. Store token in token DB
-                        _a.sent();
-                        // 4. Return token
-                        return [2 /*return*/, sessionToken];
-                    case 3: return [2 /*return*/, undefined];
-                }
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        var reqBody = "";
+                        _this.req.on("data", function (data) {
+                            reqBody += data;
+                        });
+                        _this.req.on("end", function () {
+                            try {
+                                var parsedBody = JSON.parse(reqBody);
+                                resolve(parsedBody);
+                            }
+                            catch (error) {
+                                reject(error);
+                            }
+                        });
+                        _this.req.on("error", function (error) {
+                            reject(error);
+                        });
+                    })];
             });
         });
     };
-    Authorizer.prototype.generateExpirationTime = function () {
-        return new Date(Date.now() + 60 * 60 * 1000);
-    };
-    Authorizer.prototype.generateRandomTokenId = function () {
-        return Math.random().toString(36).slice(2);
-    };
-    return Authorizer;
+    return BaseRequestHandler;
 }());
-exports["default"] = Authorizer;
+exports["default"] = BaseRequestHandler;

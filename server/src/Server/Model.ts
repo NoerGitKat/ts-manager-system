@@ -3,8 +3,4 @@ interface LoginInformation {
   password: string;
 }
 
-interface RequestHandler {
-  handleRequest(): Promise<void>;
-}
-
-export { LoginInformation, RequestHandler };
+export { LoginInformation };

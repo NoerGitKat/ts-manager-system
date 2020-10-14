@@ -15,7 +15,7 @@ class Authorizer implements TokenGenerator {
       credentials.username,
       credentials.password
     );
-    console.log("validUser", validUser);
+
     if (validUser) {
       // 2. Create token
       const sessionToken = {

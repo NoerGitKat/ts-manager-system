@@ -65,13 +65,11 @@ var CredsDbAccess = /** @class */ (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 return [2 /*return*/, new Promise(function (resolve, reject) {
-                        console.log("username", username);
                         _this.database.find({ username: username, password: password }, function (err, docs) {
                             if (err) {
                                 reject(err);
                             }
                             else {
-                                console.log("docs", docs);
                                 if (docs.length == 0) {
                                     resolve(undefined);
                                 }

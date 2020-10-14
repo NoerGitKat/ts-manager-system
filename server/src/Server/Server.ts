@@ -1,6 +1,7 @@
 import { createServer, IncomingMessage, ServerResponse } from "http";
 import Authorizer from "./../Authorization/Authorizer";
 import LoginHandler from "./LoginHandler";
+import UsersHandler from "./UsersHandler";
 import Utils from "./Utils";
 
 class Server {
@@ -15,8 +16,13 @@ class Server {
           const loginHandler = new LoginHandler(req, res, this.authorizer);
           await loginHandler.handleRequest();
           break;
+        case "/users":
+          const usersHandler = new UsersHandler(req, res);
+          await usersHandler.handleRequest();
+          break;
         default:
           console.log("other route asds");
+          break;
       }
 
       res.end();

@@ -7,10 +7,20 @@ var Utils = /** @class */ (function () {
     // Static properties/methods can only be accessed without instantiating the class
     Utils.getUrlRoute = function (url) {
         if (url) {
-            var parsedUrl = url_1.parse(url);
-            return parsedUrl.pathname;
+            var parsedUrl = this.getQueryParams(url);
+            if (parsedUrl) {
+                return parsedUrl.pathname;
+            }
         }
         return "";
+    };
+    Utils.getQueryParams = function (url) {
+        if (url) {
+            return url_1.parse(url, true);
+        }
+        else {
+            return undefined;
+        }
     };
     return Utils;
 }());

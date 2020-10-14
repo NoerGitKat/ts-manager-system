@@ -39,6 +39,7 @@ exports.__esModule = true;
 var http_1 = require("http");
 var Authorizer_1 = require("./../Authorization/Authorizer");
 var LoginHandler_1 = require("./LoginHandler");
+var UsersHandler_1 = require("./UsersHandler");
 var Utils_1 = require("./Utils");
 var Server = /** @class */ (function () {
     function Server() {
@@ -47,7 +48,7 @@ var Server = /** @class */ (function () {
     Server.prototype.startServer = function (PORT) {
         var _this = this;
         http_1.createServer(function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var route, _a, loginHandler;
+            var route, _a, loginHandler, usersHandler;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -55,18 +56,25 @@ var Server = /** @class */ (function () {
                         _a = route;
                         switch (_a) {
                             case "/login": return [3 /*break*/, 1];
+                            case "/users": return [3 /*break*/, 3];
                         }
-                        return [3 /*break*/, 3];
+                        return [3 /*break*/, 5];
                     case 1:
                         loginHandler = new LoginHandler_1["default"](req, res, this.authorizer);
                         return [4 /*yield*/, loginHandler.handleRequest()];
                     case 2:
                         _b.sent();
-                        return [3 /*break*/, 4];
+                        return [3 /*break*/, 6];
                     case 3:
-                        console.log("other route asds");
-                        _b.label = 4;
+                        usersHandler = new UsersHandler_1["default"](req, res);
+                        return [4 /*yield*/, usersHandler.handleRequest()];
                     case 4:
+                        _b.sent();
+                        return [3 /*break*/, 6];
+                    case 5:
+                        console.log("other route asds");
+                        return [3 /*break*/, 6];
+                    case 6:
                         res.end();
                         return [2 /*return*/];
                 }
