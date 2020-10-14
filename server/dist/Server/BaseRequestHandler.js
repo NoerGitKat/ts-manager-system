@@ -46,10 +46,15 @@ var BaseRequestHandler = /** @class */ (function () {
         this.res.statusCode = Model_1.HTTP_CODES.NOT_FOUND;
         this.res.write(message);
     };
-    BaseRequestHandler.prototype.handleBadRequest = function (error) {
+    BaseRequestHandler.prototype.handleBadRequest = function (message) {
         this.res.statusCode = Model_1.HTTP_CODES.BAD_REQUEST;
         this.res.writeHead(Model_1.HTTP_CODES.BAD_REQUEST);
-        this.res.write("Something went wrong: " + error.message);
+        this.res.write("Something went wrong: " + message);
+    };
+    BaseRequestHandler.prototype.handleUnAuthorizedRequest = function (message) {
+        this.res.statusCode = Model_1.HTTP_CODES.UNAUTHORIZED;
+        this.res.writeHead(Model_1.HTTP_CODES.UNAUTHORIZED);
+        this.res.write("Something went wrong: " + message);
     };
     BaseRequestHandler.prototype.respondWithJSON = function (code, object) {
         this.res.statusCode = code;

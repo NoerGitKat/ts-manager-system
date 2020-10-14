@@ -66,7 +66,7 @@ var Server = /** @class */ (function () {
                         _b.sent();
                         return [3 /*break*/, 6];
                     case 3:
-                        usersHandler = new UsersHandler_1["default"](req, res);
+                        usersHandler = new UsersHandler_1["default"](req, res, this.authorizer);
                         return [4 /*yield*/, usersHandler.handleRequest()];
                     case 4:
                         _b.sent();

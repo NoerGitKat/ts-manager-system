@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.JOB = void 0;
+exports.TokenState = exports.JOB = void 0;
 var JOB;
 (function (JOB) {
     JOB[JOB["JUNIOR"] = 0] = "JUNIOR";
@@ -9,3 +9,10 @@ var JOB;
     JOB[JOB["EXPERT"] = 3] = "EXPERT";
 })(JOB || (JOB = {}));
 exports.JOB = JOB;
+var TokenState;
+(function (TokenState) {
+    TokenState[TokenState["VALID"] = 0] = "VALID";
+    TokenState[TokenState["INVALID"] = 1] = "INVALID";
+    TokenState[TokenState["EXPIRED"] = 2] = "EXPIRED";
+})(TokenState || (TokenState = {}));
+exports.TokenState = TokenState;

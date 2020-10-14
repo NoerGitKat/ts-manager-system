@@ -21,6 +21,23 @@ class TokenDbAccess {
       });
     });
   }
+
+  public async checkTokenInDB(
+    tokenId: string
+  ): Promise<SessionToken | undefined> {
+    return new Promise((resolve, reject) => {
+      this.database.findOne(
+        { tokenId },
+        (error: Error | null, document: SessionToken) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(document);
+          }
+        }
+      );
+    });
+  }
 }
 
 export default TokenDbAccess;

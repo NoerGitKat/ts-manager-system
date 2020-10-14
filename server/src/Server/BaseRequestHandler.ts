@@ -18,10 +18,16 @@ abstract class BaseRequestHandler {
     this.res.write(message);
   }
 
-  public handleBadRequest(error: Error): void {
+  public handleBadRequest(message: string): void {
     this.res.statusCode = HTTP_CODES.BAD_REQUEST;
     this.res.writeHead(HTTP_CODES.BAD_REQUEST);
-    this.res.write(`Something went wrong: ${error.message}`);
+    this.res.write(`Something went wrong: ${message}`);
+  }
+
+  public handleUnAuthorizedRequest(message: string): void {
+    this.res.statusCode = HTTP_CODES.UNAUTHORIZED;
+    this.res.writeHead(HTTP_CODES.UNAUTHORIZED);
+    this.res.write(`Something went wrong: ${message}`);
   }
 
   public respondWithJSON(code: HTTP_CODES, object: any) {

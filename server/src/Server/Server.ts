@@ -17,7 +17,7 @@ class Server {
           await loginHandler.handleRequest();
           break;
         case "/users":
-          const usersHandler = new UsersHandler(req, res);
+          const usersHandler = new UsersHandler(req, res, this.authorizer);
           await usersHandler.handleRequest();
           break;
         default:

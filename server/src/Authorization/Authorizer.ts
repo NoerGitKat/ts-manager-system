@@ -2,8 +2,13 @@ import { LoginInformation } from "../Server/Model";
 import { TokenGenerator, SessionToken } from "./Model";
 import TokenDbAccess from "./TokenDbAccess";
 import CredsDbAccess from "./CredsDbAccess";
+import {
+  TokenPrivileges,
+  TokenState,
+  TokenValidator,
+} from "../Authentication/Model";
 
-class Authorizer implements TokenGenerator {
+class Authorizer implements TokenGenerator, TokenValidator {
   private credsDbAccess: CredsDbAccess = new CredsDbAccess();
   private tokenDbAccess: TokenDbAccess = new TokenDbAccess();
 
@@ -35,6 +40,27 @@ class Authorizer implements TokenGenerator {
       return undefined;
     }
   }
+
+  public async validateToken(tokenId: string): Promise<TokenPrivileges> {
+    const token = await this.tokenDbAccess.checkTokenInDB(tokenId);
+    if (!token || !token.isValid) {
+      return {
+        privileges: [],
+        state: TokenState.INVALID,
+      };
+    } else if (token.expirationTime < new Date()) {
+      return {
+        privileges: [],
+        state: TokenState.EXPIRED,
+      };
+    } else {
+      return {
+        privileges: token.privileges,
+        state: TokenState.VALID,
+      };
+    }
+  }
+
   private generateExpirationTime(): Date {
     return new Date(Date.now() + 60 * 60 * 1000);
   }

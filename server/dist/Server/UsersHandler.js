@@ -55,9 +55,10 @@ var BaseRequestHandler_1 = require("./BaseRequestHandler");
 var Utils_1 = require("./Utils");
 var UsersHandler = /** @class */ (function (_super) {
     __extends(UsersHandler, _super);
-    function UsersHandler(req, res) {
+    function UsersHandler(req, res, tokenValidator) {
         var _this = _super.call(this, req, res) || this;
         _this.userDbAccess = new UsersDbAccess_1["default"]();
+        _this.tokenValidator = tokenValidator;
         return _this;
     }
     UsersHandler.prototype.handleRequest = function () {
@@ -87,27 +88,56 @@ var UsersHandler = /** @class */ (function (_super) {
     };
     UsersHandler.prototype.getOneUser = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var parsedUrl, userId, user;
+            var isAuthorized, parsedUrl, userId, user;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
+                    case 0: return [4 /*yield*/, this.authorizeRequest(Model_1.Privilege.READ)];
+                    case 1:
+                        isAuthorized = _a.sent();
+                        if (!isAuthorized) return [3 /*break*/, 4];
                         parsedUrl = Utils_1["default"].getQueryParams(this.req.url);
-                        if (!parsedUrl) return [3 /*break*/, 2];
+                        if (!parsedUrl) return [3 /*break*/, 3];
                         userId = parsedUrl.query.id;
                         return [4 /*yield*/, this.userDbAccess.getOneUserInDB(userId)];
-                    case 1:
+                    case 2:
                         user = _a.sent();
                         if (user) {
-                            this.res.writeHead(Model_1.HTTP_CODES.OK, {
-                                "Content-Type": "application/json"
-                            });
-                            this.res.write(JSON.stringify(user));
+                            this.respondWithJSON(Model_1.HTTP_CODES.OK, user);
                         }
                         else {
                             this.handleNotFound("No user found!");
                         }
-                        _a.label = 2;
-                    case 2: return [2 /*return*/, undefined];
+                        _a.label = 3;
+                    case 3: return [3 /*break*/, 5];
+                    case 4:
+                        this.handleUnAuthorizedRequest("You are not authorized to do this.");
+                        _a.label = 5;
+                    case 5: return [2 /*return*/, undefined];
+                }
+            });
+        });
+    };
+    UsersHandler.prototype.authorizeRequest = function (operation) {
+        return __awaiter(this, void 0, void 0, function () {
+            var tokenId, tokenPrivileges;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        tokenId = this.req.headers.authorization;
+                        if (!tokenId) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.tokenValidator.validateToken(tokenId)];
+                    case 1:
+                        tokenPrivileges = _a.sent();
+                        // 3. Check if the current operation is within the privilege of the user
+                        if (tokenPrivileges.privileges.includes(operation)) {
+                            return [2 /*return*/, true];
+                        }
+                        else {
+                            return [2 /*return*/, false];
+                        }
+                        return [3 /*break*/, 3];
+                    case 2: return [2 /*return*/, false];
+                    case 3: return [2 /*return*/];
                 }
             });
         });

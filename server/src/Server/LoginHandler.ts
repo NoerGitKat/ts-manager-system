@@ -51,7 +51,7 @@ class LoginHandler extends BaseRequestHandler {
         }
       }
     } catch (error) {
-      this.handleBadRequest(error);
+      this.handleBadRequest(error.message);
     }
   }
 }

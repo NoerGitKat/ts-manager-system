@@ -1,16 +1,22 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { User } from "../Authentication/Model";
+import { TokenValidator, User } from "../Authentication/Model";
 import UsersDbAccess from "../Authentication/UsersDbAccess";
-import { HTTP_CODES, HTTP_METHODS } from "../Shared/Model";
+import { HTTP_CODES, HTTP_METHODS, Privilege } from "../Shared/Model";
 import BaseRequestHandler from "./BaseRequestHandler";
 import Utils from "./Utils";
 
 class UsersHandler extends BaseRequestHandler {
   private userDbAccess: UsersDbAccess;
+  private tokenValidator: TokenValidator;
 
-  public constructor(req: IncomingMessage, res: ServerResponse) {
+  public constructor(
+    req: IncomingMessage,
+    res: ServerResponse,
+    tokenValidator: TokenValidator
+  ) {
     super(req, res);
     this.userDbAccess = new UsersDbAccess();
+    this.tokenValidator = tokenValidator;
   }
 
   public async handleRequest(): Promise<void> {
@@ -27,24 +33,46 @@ class UsersHandler extends BaseRequestHandler {
   }
 
   private async getOneUser(): Promise<User | undefined> {
-    const parsedUrl = Utils.getQueryParams(this.req.url);
+    const isAuthorized = await this.authorizeRequest(Privilege.READ);
 
-    if (parsedUrl) {
-      // Get user from db
-      const userId = parsedUrl.query.id;
-      const user = await this.userDbAccess.getOneUserInDB(userId as string);
+    if (isAuthorized) {
+      const parsedUrl = Utils.getQueryParams(this.req.url);
 
-      if (user) {
-        this.res.writeHead(HTTP_CODES.OK, {
-          "Content-Type": "application/json",
-        });
-        this.res.write(JSON.stringify(user));
-      } else {
-        this.handleNotFound("No user found!");
+      if (parsedUrl) {
+        // Get user from db
+        const userId = parsedUrl.query.id;
+        const user = await this.userDbAccess.getOneUserInDB(userId as string);
+
+        if (user) {
+          this.respondWithJSON(HTTP_CODES.OK, user);
+        } else {
+          this.handleNotFound("No user found!");
+        }
       }
+    } else {
+      this.handleUnAuthorizedRequest("You are not authorized to do this.");
     }
 
     return undefined;
+  }
+
+  public async authorizeRequest(operation: Privilege): Promise<Boolean> {
+    // 1. Get session token id from headers
+    const tokenId = this.req.headers.authorization;
+
+    if (tokenId) {
+      //  2. Get privileges from token
+      const tokenPrivileges = await this.tokenValidator.validateToken(tokenId);
+
+      // 3. Check if the current operation is within the privilege of the user
+      if (tokenPrivileges.privileges.includes(operation)) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 }
 

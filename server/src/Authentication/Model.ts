@@ -1,3 +1,5 @@
+import { Privilege } from "../Shared/Model";
+
 enum JOB {
   JUNIOR,
   MEDIOR,
@@ -13,4 +15,18 @@ interface User {
   job: JOB;
 }
 
-export { User, JOB };
+interface TokenPrivileges {
+  privileges: Privilege[];
+  state: TokenState;
+}
+
+interface TokenValidator {
+  validateToken(tokenId: string): Promise<TokenPrivileges>;
+}
+enum TokenState {
+  VALID,
+  INVALID,
+  EXPIRED,
+}
+
+export { User, JOB, TokenValidator, TokenPrivileges, TokenState };

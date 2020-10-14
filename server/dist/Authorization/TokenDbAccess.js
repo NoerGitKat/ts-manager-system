@@ -60,6 +60,23 @@ var TokenDbAccess = /** @class */ (function () {
             });
         });
     };
+    TokenDbAccess.prototype.checkTokenInDB = function (tokenId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        _this.database.findOne({ tokenId: tokenId }, function (error, document) {
+                            if (error) {
+                                reject(error);
+                            }
+                            else {
+                                resolve(document);
+                            }
+                        });
+                    })];
+            });
+        });
+    };
     return TokenDbAccess;
 }());
 exports["default"] = TokenDbAccess;

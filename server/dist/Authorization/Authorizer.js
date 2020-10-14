@@ -38,6 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var TokenDbAccess_1 = require("./TokenDbAccess");
 var CredsDbAccess_1 = require("./CredsDbAccess");
+var Model_1 = require("../Authentication/Model");
 var Authorizer = /** @class */ (function () {
     function Authorizer() {
         this.credsDbAccess = new CredsDbAccess_1["default"]();
@@ -67,6 +68,37 @@ var Authorizer = /** @class */ (function () {
                         // 4. Return token
                         return [2 /*return*/, sessionToken];
                     case 3: return [2 /*return*/, undefined];
+                }
+            });
+        });
+    };
+    Authorizer.prototype.validateToken = function (tokenId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var token;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.tokenDbAccess.checkTokenInDB(tokenId)];
+                    case 1:
+                        token = _a.sent();
+                        if (!token || !token.isValid) {
+                            return [2 /*return*/, {
+                                    privileges: [],
+                                    state: Model_1.TokenState.INVALID
+                                }];
+                        }
+                        else if (token.expirationTime < new Date()) {
+                            return [2 /*return*/, {
+                                    privileges: [],
+                                    state: Model_1.TokenState.EXPIRED
+                                }];
+                        }
+                        else {
+                            return [2 /*return*/, {
+                                    privileges: token.privileges,
+                                    state: Model_1.TokenState.VALID
+                                }];
+                        }
+                        return [2 /*return*/];
                 }
             });
         });

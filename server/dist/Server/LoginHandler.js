@@ -113,7 +113,7 @@ var LoginHandler = /** @class */ (function (_super) {
                     case 3: return [3 /*break*/, 5];
                     case 4:
                         error_1 = _a.sent();
-                        this.handleBadRequest(error_1);
+                        this.handleBadRequest(error_1.message);
                         return [3 /*break*/, 5];
                     case 5: return [2 /*return*/];
                 }
