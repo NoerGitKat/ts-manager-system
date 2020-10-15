@@ -60,6 +60,31 @@ class UsersDbAccess {
     });
   }
 
+  public async deleteUserFromDB(userId: string): Promise<Boolean> {
+    const isDeleted = await this.deleteUser(userId);
+    this.database.loadDatabase();
+    return isDeleted;
+  }
+
+  private async deleteUser(userId: string): Promise<Boolean> {
+    return new Promise((resolve, reject) => {
+      this.database.remove(
+        { id: userId },
+        (error: Error | null, numRemoved: number) => {
+          if (error) {
+            reject(error);
+          } else {
+            if (numRemoved === 0) {
+              resolve(false);
+            } else {
+              resolve(true);
+            }
+          }
+        }
+      );
+    });
+  }
+
   private generateRandomUserId(): string {
     return Math.random().toString(36).slice(2);
   }

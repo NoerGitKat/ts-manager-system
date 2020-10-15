@@ -71,20 +71,25 @@ var UsersHandler = /** @class */ (function (_super) {
                         switch (_a) {
                             case Model_1.HTTP_METHODS.GET: return [3 /*break*/, 1];
                             case Model_1.HTTP_METHODS.POST: return [3 /*break*/, 3];
+                            case Model_1.HTTP_METHODS.DELETE: return [3 /*break*/, 5];
                         }
-                        return [3 /*break*/, 5];
+                        return [3 /*break*/, 7];
                     case 1: return [4 /*yield*/, this.fetchUsers()];
                     case 2:
                         _b.sent();
-                        return [3 /*break*/, 6];
+                        return [3 /*break*/, 8];
                     case 3: return [4 /*yield*/, this.createUser()];
                     case 4:
                         _b.sent();
-                        return [3 /*break*/, 6];
-                    case 5:
+                        return [3 /*break*/, 8];
+                    case 5: return [4 /*yield*/, this.deleteUser()];
+                    case 6:
+                        _b.sent();
+                        return [3 /*break*/, 8];
+                    case 7:
                         this.handleNotFound("Method not found!");
-                        return [3 /*break*/, 6];
-                    case 6: return [2 /*return*/];
+                        return [3 /*break*/, 8];
+                    case 8: return [2 /*return*/];
                 }
             });
         });
@@ -206,9 +211,49 @@ var UsersHandler = /** @class */ (function (_super) {
             });
         });
     };
+    UsersHandler.prototype.deleteUser = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var isAuthorized, parsedUrl, userId, isDeleted, error_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 6, , 7]);
+                        return [4 /*yield*/, this.authorizeRequest(Model_1.Privilege.DELETE)];
+                    case 1:
+                        isAuthorized = _a.sent();
+                        if (!isAuthorized) return [3 /*break*/, 4];
+                        parsedUrl = Utils_1["default"].getQueryParams(this.req.url);
+                        if (!parsedUrl) return [3 /*break*/, 3];
+                        userId = parsedUrl.query.id;
+                        return [4 /*yield*/, this.userDbAccess.deleteUserFromDB(userId)];
+                    case 2:
+                        isDeleted = _a.sent();
+                        if (isDeleted) {
+                            this.respondWithJSON(Model_1.HTTP_CODES.OK, {
+                                msg: "User successfully deleted!"
+                            });
+                        }
+                        else {
+                            this.handleNotFound("User not found.");
+                        }
+                        _a.label = 3;
+                    case 3: return [3 /*break*/, 5];
+                    case 4:
+                        this.handleUnAuthorizedRequest("You are not authorized to do this.");
+                        _a.label = 5;
+                    case 5: return [3 /*break*/, 7];
+                    case 6:
+                        error_4 = _a.sent();
+                        this.handleServerError(error_4.message);
+                        return [3 /*break*/, 7];
+                    case 7: return [2 /*return*/];
+                }
+            });
+        });
+    };
     UsersHandler.prototype.authorizeRequest = function (operation) {
         return __awaiter(this, void 0, void 0, function () {
-            var tokenId, tokenPrivileges, error_4;
+            var tokenId, tokenPrivileges, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -229,8 +274,8 @@ var UsersHandler = /** @class */ (function (_super) {
                     case 2: return [2 /*return*/, false];
                     case 3: return [3 /*break*/, 5];
                     case 4:
-                        error_4 = _a.sent();
-                        this.handleServerError(error_4.message);
+                        error_5 = _a.sent();
+                        this.handleServerError(error_5.message);
                         return [2 /*return*/, false];
                     case 5: return [2 /*return*/];
                 }

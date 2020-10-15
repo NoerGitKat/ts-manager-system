@@ -27,6 +27,9 @@ class UsersHandler extends BaseRequestHandler {
       case HTTP_METHODS.POST:
         await this.createUser();
         break;
+      case HTTP_METHODS.DELETE:
+        await this.deleteUser();
+        break;
       default:
         this.handleNotFound("Method not found!");
         break;
@@ -103,6 +106,35 @@ class UsersHandler extends BaseRequestHandler {
         await this.userDbAccess.storeUserInDB(newUser);
         // // 4. Respond with new user
         this.respondWithJSON(HTTP_CODES.CREATED, newUser);
+      } else {
+        this.handleUnAuthorizedRequest("You are not authorized to do this.");
+      }
+    } catch (error) {
+      this.handleServerError(error.message);
+    }
+  }
+
+  private async deleteUser(): Promise<void> {
+    try {
+      const isAuthorized = await this.authorizeRequest(Privilege.DELETE);
+
+      if (isAuthorized) {
+        const parsedUrl = Utils.getQueryParams(this.req.url);
+
+        if (parsedUrl) {
+          // Get user from db
+          const userId = parsedUrl.query.id;
+          const isDeleted = await this.userDbAccess.deleteUserFromDB(
+            userId as string
+          );
+          if (isDeleted) {
+            this.respondWithJSON(HTTP_CODES.OK, {
+              msg: "User successfully deleted!",
+            });
+          } else {
+            this.handleNotFound("User not found.");
+          }
+        }
       } else {
         this.handleUnAuthorizedRequest("You are not authorized to do this.");
       }

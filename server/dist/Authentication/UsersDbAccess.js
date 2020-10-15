@@ -102,6 +102,42 @@ var UsersDbAccess = /** @class */ (function () {
             });
         });
     };
+    UsersDbAccess.prototype.deleteUserFromDB = function (userId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var isDeleted;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.deleteUser(userId)];
+                    case 1:
+                        isDeleted = _a.sent();
+                        this.database.loadDatabase();
+                        return [2 /*return*/, isDeleted];
+                }
+            });
+        });
+    };
+    UsersDbAccess.prototype.deleteUser = function (userId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        _this.database.remove({ id: userId }, function (error, numRemoved) {
+                            if (error) {
+                                reject(error);
+                            }
+                            else {
+                                if (numRemoved === 0) {
+                                    resolve(false);
+                                }
+                                else {
+                                    resolve(true);
+                                }
+                            }
+                        });
+                    })];
+            });
+        });
+    };
     UsersDbAccess.prototype.generateRandomUserId = function () {
         return Math.random().toString(36).slice(2);
     };
