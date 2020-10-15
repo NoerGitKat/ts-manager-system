@@ -41,8 +41,31 @@ class UsersDbAccess {
     });
   }
 
+  public async getUsersByName(name: string): Promise<User[]> {
+    return new Promise((resolve, reject) => {
+      this.database.find(
+        { name: this.convertToRegEx(name) },
+        (error: Error | null, docs: User[]) => {
+          if (error) {
+            reject(error);
+          } else {
+            if (docs.length === 0) {
+              resolve([]);
+            } else {
+              resolve(docs);
+            }
+          }
+        }
+      );
+    });
+  }
+
   private generateRandomUserId(): string {
     return Math.random().toString(36).slice(2);
+  }
+
+  private convertToRegEx(string: string): RegExp {
+    return new RegExp(string);
   }
 }
 

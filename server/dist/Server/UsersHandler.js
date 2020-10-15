@@ -73,7 +73,7 @@ var UsersHandler = /** @class */ (function (_super) {
                             case Model_1.HTTP_METHODS.POST: return [3 /*break*/, 3];
                         }
                         return [3 /*break*/, 5];
-                    case 1: return [4 /*yield*/, this.getOneUser()];
+                    case 1: return [4 /*yield*/, this.fetchUsers()];
                     case 2:
                         _b.sent();
                         return [3 /*break*/, 6];
@@ -89,20 +89,25 @@ var UsersHandler = /** @class */ (function (_super) {
             });
         });
     };
-    UsersHandler.prototype.getOneUser = function () {
+    UsersHandler.prototype.fetchUsers = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var isAuthorized, parsedUrl, userId, user;
+            var isAuthorized, parsedUrl, userId, userName, user, users, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.authorizeRequest(Model_1.Privilege.READ)];
                     case 1:
                         isAuthorized = _a.sent();
-                        if (!isAuthorized) return [3 /*break*/, 4];
+                        if (!isAuthorized) return [3 /*break*/, 10];
                         parsedUrl = Utils_1["default"].getQueryParams(this.req.url);
-                        if (!parsedUrl) return [3 /*break*/, 3];
+                        if (!parsedUrl) return [3 /*break*/, 9];
                         userId = parsedUrl.query.id;
-                        return [4 /*yield*/, this.userDbAccess.getOneUserInDB(userId)];
+                        userName = parsedUrl.query.name;
+                        _a.label = 2;
                     case 2:
+                        _a.trys.push([2, 8, , 9]);
+                        if (!userId) return [3 /*break*/, 4];
+                        return [4 /*yield*/, this.userDbAccess.getOneUserInDB(userId)];
+                    case 3:
                         user = _a.sent();
                         if (user) {
                             this.respondWithJSON(Model_1.HTTP_CODES.OK, user);
@@ -110,19 +115,65 @@ var UsersHandler = /** @class */ (function (_super) {
                         else {
                             this.handleNotFound("No user found!");
                         }
-                        _a.label = 3;
-                    case 3: return [3 /*break*/, 5];
+                        return [3 /*break*/, 7];
                     case 4:
+                        if (!userName) return [3 /*break*/, 6];
+                        return [4 /*yield*/, this.fetchUsersByName(userName)];
+                    case 5:
+                        users = _a.sent();
+                        if (users && users.length > 0) {
+                            this.respondWithJSON(Model_1.HTTP_CODES.OK, users);
+                        }
+                        else {
+                            this.handleNotFound("No user found!");
+                        }
+                        return [3 /*break*/, 7];
+                    case 6:
+                        this.handleBadRequest("");
+                        _a.label = 7;
+                    case 7: return [3 /*break*/, 9];
+                    case 8:
+                        error_1 = _a.sent();
+                        this.handleServerError(error_1.message);
+                        return [3 /*break*/, 9];
+                    case 9: return [3 /*break*/, 11];
+                    case 10:
                         this.handleUnAuthorizedRequest("You are not authorized to do this.");
-                        _a.label = 5;
-                    case 5: return [2 /*return*/, undefined];
+                        _a.label = 11;
+                    case 11: return [2 /*return*/, undefined];
+                }
+            });
+        });
+    };
+    UsersHandler.prototype.fetchUsersByName = function (name) {
+        return __awaiter(this, void 0, void 0, function () {
+            var users, error_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.userDbAccess.getUsersByName(name)];
+                    case 1:
+                        users = _a.sent();
+                        if (users.length > 0) {
+                            return [2 /*return*/, users];
+                        }
+                        else {
+                            return [2 /*return*/, []];
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        error_2 = _a.sent();
+                        this.handleBadRequest(error_2.message);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
                 }
             });
         });
     };
     UsersHandler.prototype.createUser = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var isAuthorized, newUser, error_1;
+            var isAuthorized, newUser, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -147,8 +198,8 @@ var UsersHandler = /** @class */ (function (_super) {
                         _a.label = 5;
                     case 5: return [3 /*break*/, 7];
                     case 6:
-                        error_1 = _a.sent();
-                        this.handleServerError(error_1.message);
+                        error_3 = _a.sent();
+                        this.handleServerError(error_3.message);
                         return [3 /*break*/, 7];
                     case 7: return [2 /*return*/];
                 }
@@ -157,7 +208,7 @@ var UsersHandler = /** @class */ (function (_super) {
     };
     UsersHandler.prototype.authorizeRequest = function (operation) {
         return __awaiter(this, void 0, void 0, function () {
-            var tokenId, tokenPrivileges, error_2;
+            var tokenId, tokenPrivileges, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -178,8 +229,8 @@ var UsersHandler = /** @class */ (function (_super) {
                     case 2: return [2 /*return*/, false];
                     case 3: return [3 /*break*/, 5];
                     case 4:
-                        error_2 = _a.sent();
-                        this.handleServerError(error_2.message);
+                        error_4 = _a.sent();
+                        this.handleServerError(error_4.message);
                         return [2 /*return*/, false];
                     case 5: return [2 /*return*/];
                 }

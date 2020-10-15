@@ -80,8 +80,33 @@ var UsersDbAccess = /** @class */ (function () {
             });
         });
     };
+    UsersDbAccess.prototype.getUsersByName = function (name) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        _this.database.find({ name: _this.convertToRegEx(name) }, function (error, docs) {
+                            if (error) {
+                                reject(error);
+                            }
+                            else {
+                                if (docs.length === 0) {
+                                    resolve([]);
+                                }
+                                else {
+                                    resolve(docs);
+                                }
+                            }
+                        });
+                    })];
+            });
+        });
+    };
     UsersDbAccess.prototype.generateRandomUserId = function () {
         return Math.random().toString(36).slice(2);
+    };
+    UsersDbAccess.prototype.convertToRegEx = function (string) {
+        return new RegExp(string);
     };
     return UsersDbAccess;
 }());

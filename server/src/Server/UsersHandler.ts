@@ -22,7 +22,7 @@ class UsersHandler extends BaseRequestHandler {
   public async handleRequest(): Promise<void> {
     switch (this.req.method) {
       case HTTP_METHODS.GET:
-        await this.getOneUser();
+        await this.fetchUsers();
         break;
       case HTTP_METHODS.POST:
         await this.createUser();
@@ -33,7 +33,7 @@ class UsersHandler extends BaseRequestHandler {
     }
   }
 
-  private async getOneUser(): Promise<User | undefined> {
+  private async fetchUsers(): Promise<User | undefined> {
     const isAuthorized = await this.authorizeRequest(Privilege.READ);
 
     if (isAuthorized) {
@@ -42,12 +42,32 @@ class UsersHandler extends BaseRequestHandler {
       if (parsedUrl) {
         // Get user from db
         const userId = parsedUrl.query.id;
-        const user = await this.userDbAccess.getOneUserInDB(userId as string);
+        // Get users by name
+        const userName = parsedUrl.query.name;
 
-        if (user) {
-          this.respondWithJSON(HTTP_CODES.OK, user);
-        } else {
-          this.handleNotFound("No user found!");
+        try {
+          if (userId) {
+            const user = await this.userDbAccess.getOneUserInDB(
+              userId as string
+            );
+
+            if (user) {
+              this.respondWithJSON(HTTP_CODES.OK, user);
+            } else {
+              this.handleNotFound("No user found!");
+            }
+          } else if (userName) {
+            const users = await this.fetchUsersByName(userName as string);
+            if (users && users.length > 0) {
+              this.respondWithJSON(HTTP_CODES.OK, users);
+            } else {
+              this.handleNotFound("No user found!");
+            }
+          } else {
+            this.handleBadRequest("");
+          }
+        } catch (error) {
+          this.handleServerError(error.message);
         }
       }
     } else {
@@ -55,6 +75,19 @@ class UsersHandler extends BaseRequestHandler {
     }
 
     return undefined;
+  }
+
+  private async fetchUsersByName(name: string): Promise<User[] | undefined> {
+    try {
+      const users = await this.userDbAccess.getUsersByName(name);
+      if (users.length > 0) {
+        return users;
+      } else {
+        return [];
+      }
+    } catch (error) {
+      this.handleBadRequest(error.message);
+    }
   }
 
   private async createUser(): Promise<void> {
