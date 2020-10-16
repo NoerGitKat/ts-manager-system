@@ -1,8 +1,6 @@
 import BaseController from "./BaseController";
 
-interface Input {
-  [key: string]: string;
-}
+
 
 class LoginController extends BaseController {
   public createView(): HTMLDivElement {
@@ -35,17 +33,7 @@ class LoginController extends BaseController {
     return this.container;
   }
 
-  private createInputEl(options: Input): HTMLInputElement {
-    const input: HTMLInputElement = document.createElement("input");
-
-    const keys: string[] = Object.keys(options);
-
-    keys.map(function (property: string, index: number): void {
-      input[property] = options[property];
-    });
-
-    return input;
-  }
+ 
 }
 
 export default LoginController;

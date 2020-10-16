@@ -7,7 +7,6 @@ class Router {
   public handleRequest() {
     const route = this.getRoute();
 
-    console.log("route", route);
     switch (route) {
       case "/":
         if (this.rootEl) {
