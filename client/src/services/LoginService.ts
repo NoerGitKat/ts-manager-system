@@ -1,26 +1,35 @@
-import DashboardController from "../controllers/DashboardController";
 import { SessionToken } from "../models/Model";
+
+const baseUrl = "http://localhost:8080";
 
 class LoginService {
   public async login(
     username: string,
     password: string
   ): Promise<SessionToken | undefined> {
-    if (username === "user" && password === "123") {
-      const token = {
-        tokenId: "asdas",
-        username: "user",
-        isValid: true,
-        expirationTime: new Date(),
-        privileges: [0, 2],
-      };
-      return token;
-    } else {
-      return undefined;
+    const request = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+    };
+
+    try {
+      const response = await fetch(`${baseUrl}/login`, request);
+
+      if (response.status === 200) {
+        const parsedResponse = await response.json();
+        return parsedResponse;
+      } else {
+        return undefined;
+      }
+    } catch (error) {
+      console.error("Error happened!", error.message);
     }
-    // return new Promise(async (resolve, reject) => {
-    //   const response = await fetch();
-    // });
   }
 }
 

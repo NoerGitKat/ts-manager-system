@@ -75,16 +75,20 @@ var LoginHandler = /** @class */ (function (_super) {
                         _a = this.req.method;
                         switch (_a) {
                             case Model_1.HTTP_METHODS.POST: return [3 /*break*/, 1];
+                            case Model_1.HTTP_METHODS.OPTIONS: return [3 /*break*/, 3];
                         }
-                        return [3 /*break*/, 3];
+                        return [3 /*break*/, 4];
                     case 1: return [4 /*yield*/, this.loginUser()];
                     case 2:
                         _b.sent();
-                        return [3 /*break*/, 4];
+                        return [3 /*break*/, 5];
                     case 3:
+                        this.res.writeHead(Model_1.HTTP_CODES.OK);
+                        _b.label = 4;
+                    case 4:
                         this.handleNotFound("Method not found!");
-                        return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/];
+                        return [3 /*break*/, 5];
+                    case 5: return [2 /*return*/];
                 }
             });
         });

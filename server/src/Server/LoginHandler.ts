@@ -31,6 +31,8 @@ class LoginHandler extends BaseRequestHandler {
       case HTTP_METHODS.POST:
         await this.loginUser();
         break;
+      case HTTP_METHODS.OPTIONS:
+        this.res.writeHead(HTTP_CODES.OK);
       default:
         this.handleNotFound("Method not found!");
         break;

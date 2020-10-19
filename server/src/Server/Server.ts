@@ -11,6 +11,8 @@ class Server {
     createServer(async (req: IncomingMessage, res: ServerResponse) => {
       const route = Utils.getUrlRoute(req.url);
 
+      this.addCorsHeader(res);
+
       switch (route) {
         case "/login":
           const loginHandler = new LoginHandler(req, res, this.authorizer);
@@ -27,6 +29,11 @@ class Server {
 
       res.end();
     }).listen(PORT);
+  }
+
+  private addCorsHeader(res: ServerResponse): void {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Headers", "*");
   }
 }
 

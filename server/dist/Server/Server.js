@@ -53,6 +53,7 @@ var Server = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         route = Utils_1["default"].getUrlRoute(req.url);
+                        this.addCorsHeader(res);
                         _a = route;
                         switch (_a) {
                             case "/login": return [3 /*break*/, 1];
@@ -80,6 +81,10 @@ var Server = /** @class */ (function () {
                 }
             });
         }); }).listen(PORT);
+    };
+    Server.prototype.addCorsHeader = function (res) {
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Headers", "*");
     };
     return Server;
 }());

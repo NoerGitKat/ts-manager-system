@@ -10,15 +10,19 @@ class LoginController extends BaseController {
   private loginButton = this.createDomEl("button", "Login!", async () => {
     if (this.usernameInput.value && this.passwordInput.value) {
       this.resetErrorMessage();
-      const token = await this.loginService.login(
-        this.usernameInput.value,
-        this.passwordInput.value
-      );
+      try {
+        const token = await this.loginService.login(
+          this.usernameInput.value,
+          this.passwordInput.value
+        );
 
-      if (token) {
-        this.router.switchToDashboardPage(token);
-      } else {
-        this.showErrorMessage("Incorrect login credentials.");
+        if (token) {
+          this.router.switchToDashboardPage(token);
+        } else {
+          this.showErrorMessage("Incorrect login credentials.");
+        }
+      } catch (error) {
+        console.error("Error happened!", error.message);
       }
     } else {
       this.showErrorMessage("Please fill in all fields.");
