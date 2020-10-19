@@ -1,7 +1,10 @@
 import BaseController from "./BaseController";
 
 class MainController extends BaseController {
-  private title = this.createDomEl("h2", "Welcome to the best website ever!");
+  private pageTitle = this.createDomEl(
+    "h2",
+    "Welcome to the best website ever!"
+  );
   private button = this.createDomEl("button", "To Login", () => {
     console.log(
       "window.location.pathname!",
@@ -14,7 +17,7 @@ class MainController extends BaseController {
   );
 
   public createView(): HTMLDivElement {
-    this.container.append(this.title, this.article, this.button);
+    this.container.append(this.pageTitle, this.article, this.button);
 
     return this.container;
   }

@@ -3,7 +3,7 @@ import BaseController from "./BaseController";
 
 class LoginController extends BaseController {
   private loginService = new LoginService();
-  private title = this.createDomEl("h2", "Please Login Here!");
+  private pageTitle = this.createDomEl("h2", "Please Login Here!");
   private username = this.createDomEl("label", "Username:");
   private password = this.createDomEl("label", "Password:");
   private error = this.createDomEl("label");
@@ -16,7 +16,7 @@ class LoginController extends BaseController {
       );
 
       if (token) {
-        console.log("got token!", token);
+        this.router.switchToDashboardPage(token);
       } else {
         this.showErrorMessage("Incorrect login credentials.");
       }
@@ -37,7 +37,7 @@ class LoginController extends BaseController {
 
   public createView(): HTMLDivElement {
     this.container.append(
-      this.title,
+      this.pageTitle,
       this.username,
       this.usernameInput,
       this.password,

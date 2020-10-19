@@ -1,9 +1,15 @@
 // Abstract classes are used to provide a common design across classes
 
+import Router from "../Router";
 import { Input } from "../types/controller-types";
 
 abstract class BaseController {
   protected container = document.createElement("div");
+  protected router: Router;
+
+  public constructor(router: Router) {
+    this.router = router;
+  }
 
   public abstract createView(): HTMLDivElement;
 
