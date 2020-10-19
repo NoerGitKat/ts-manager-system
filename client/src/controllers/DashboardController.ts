@@ -1,4 +1,4 @@
-import { SessionToken } from "../models/Model";
+import { Privilege, SessionToken } from "../models/Model";
 import BaseController from "./BaseController";
 
 class DashboardController extends BaseController {
@@ -16,13 +16,22 @@ class DashboardController extends BaseController {
         "p",
         `Welcome, ${this.token.username}!`
       );
+      this.generatePrivilegeButtons();
     }
-
-    console.log("whats happening");
 
     this.container.append(this.pageTitle, this.paragraph);
 
     return this.container;
+  }
+
+  private generatePrivilegeButtons() {
+    if (this.token) {
+      let element;
+      for (const privilege of this.token.privileges) {
+        element = this.createDomEl("button", Privilege[privilege]);
+        this.container.append(element);
+      }
+    }
   }
 }
 
