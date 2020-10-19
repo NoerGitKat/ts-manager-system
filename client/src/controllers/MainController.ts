@@ -1,20 +1,20 @@
 import BaseController from "./BaseController";
 
 class MainController extends BaseController {
-  public createView(): HTMLDivElement {
-    const title = this.createDomEl("h2", "Welcome to the best website ever!");
-    const button = this.createDomEl("button", "To Login", () => {
-      console.log(
-        "window.location.pathname!",
-        (window.location.pathname = "/login")
-      );
-    });
-    const article = this.createDomEl(
-      "article",
-      "I know, crazy statement but true!"
+  private title = this.createDomEl("h2", "Welcome to the best website ever!");
+  private button = this.createDomEl("button", "To Login", () => {
+    console.log(
+      "window.location.pathname!",
+      (window.location.pathname = "/login")
     );
+  });
+  private article = this.createDomEl(
+    "article",
+    "I know, crazy statement but true!"
+  );
 
-    this.container.append(title, article, button);
+  public createView(): HTMLDivElement {
+    this.container.append(this.title, this.article, this.button);
 
     return this.container;
   }
